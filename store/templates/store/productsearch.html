@@ -1,0 +1,44 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+    <h1 class="font-weight-light" >Search For Products | MyShop </h1>
+            <hr>
+<div class="row">
+
+        {% if products|length == 0 %}
+                <div class="alert alert-warning col-12">
+                    <strong>
+                        <h3>No Product Found!</h3>
+                    </strong>
+                </div>
+        {% elif products|length > 0 %}
+		{% for product in products %}
+		<div class="col-lg-4">
+			<img class="thumbnail" src="{{product.imageURL}}">
+
+			<div class="box-element product">
+                    {% if request.session.customer %}
+                    <h6><strong>{{product.name}}</strong>
+                        <button data-product="{{ product.name }}"
+                                data-action="addf" style="display: inline-block;
+                                 float: right" class="btn btn-outline-danger add-btn like">Add to Favorites</button>
+                    </h6>
+                    {% else %}
+                    <h6><strong>{{product.name}}</strong></h6>
+                    {% endif %}
+				<hr>
+
+				<button data-product="{{ product.id }}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+				<h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
+
+			</div>
+
+		</div>
+		{% endfor %}
+        {% endif %}
+	</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>Ecom</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favico/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favico/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favico/favicon-16x16.png' %}">
+    <link rel="manifest" href="/site.webmanifest">
+
+
+    <style type="text/css">
+
+
+    </style>
+
+    <script type="text/javascript">
+
+        var user= '{{ request.session.customer }}'
+
+        function getToken(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = cookies[i].trim();
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		var csrftoken = getToken('csrftoken')
+
+        function getCookie(name) {
+		    // Split cookie string and get all individual name=value pairs in an array
+		    var cookieArr = document.cookie.split(";");
+
+		    // Loop through the array elements
+		    for(var i = 0; i < cookieArr.length; i++) {
+		        var cookiePair = cookieArr[i].split("=");
+
+		        /* Removing whitespace at the beginning of the cookie name
+		        and compare it with the given string */
+		        if(name == cookiePair[0].trim()) {
+		            // Decode the cookie value and return
+		            return decodeURIComponent(cookiePair[1]);
+		        }
+		    }
+
+		    // Return null if not found
+		    return null;
+		}
+		var cart = JSON.parse(getCookie('cart'))
+
+		if (cart == undefined){
+			cart = {}
+			console.log('Cart Created!', cart)
+			document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+		}
+		console.log('Cart:', cart)
+
+
+    </script>
+</head>
+<body >
+
+    <header>
+     <nav class="navbar navbar-expand-lg navbar-light bg-nav mb-4">
+        <a class="navbar-brand" href="{% url 'store' %}">Django MyShop</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'store' %}">Products</a>
+                </li>
+            </ul>
+            <form class="form-inline">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart' %}">
+                            <img  id="cart-icon" src="{% static 'images/cart.png' %}">
+                            Cart
+                        <span class="badge badge-info">{{ cartItems }}</span>      |
+                        </a>
+                    </li>
+                    {% if request.session.customer %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'favorite' %}">
+                            <img  id="cart-icon" src="{% static 'images/favorite.png' %}">
+                            Favorites       |</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <img  id="cart-icon" src="{% static 'images/logout.png' %}">
+                            Logout        |</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}">
+                            <img  id="cart-icon" src="{% static 'images/profile.png' %}">
+                            Profile</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">
+                            <img  id="cart-icon" src="{% static 'images/signup.png' %}">
+                            Signup        |</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">
+                            <img  id="cart-icon" src="{% static 'images/login.png' %}">
+                            Login        |</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </form>
+            <form action="/search" method="get" id="form" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Product Name..." name="search" aria-label="Search">
+                <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+</header>
+
+<div>
+    <br>
+    <br>
+    <br>
+    <br>
+</div>
+    <div class="container">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+<a class="gotopbtn" href="#"> <i class="fas fa-arrow-up"></i> </a>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/favoriteBtn.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+
+<div>
+    <br>
+    <br>
+    <br>
+    <br>
+</div>
+
+<footer class="footer">
+    <div class="inner-footer">
+        <div class="social-links">
+            <ul>
+                <li class="social-items"><a href="#"><i class="fab fa-facebook"></i></a></li>
+                <li class="social-items"><a href="#"><i class="fab fa-twitter"></i></a></li>
+                <li class="social-items"><a href="#"><i class="fab fa-instagram"></i></a></li>
+                <li class="social-items"><a href="#"><i class="fab fa-tumblr-square"></i></a></li>
+            </ul>
+        </div>
+        <div class="quick-links">
+            <ul>
+                    {% if request.session.customer %}
+                        <li class="quick-items"><a href="{% url 'store' %}">Home</a></li>
+                        <li class="quick-items"><a href="{% url 'logout' %}">Log Out</a></li>
+                        <li class="quick-items"><a href="#">Contact Us</a></li>
+                    {% else %}
+                        <li class="quick-items"><a href="{% url 'store' %}">Home</a></li>
+                        <li class="quick-items"><a href="/signup">Sign Up</a></li>
+                        <li class="quick-items"><a href="#">Contact Us</a></li>
+                    {% endif %}
+
+            </ul>
+        </div>
+    </div>
+    <div class="outer-footer">
+        Copyright &copy; Elkhadiri Abde Samade. All Rights Reserved
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+    <h1 class="font-weight-light" >My Favorites | MyShop </h1>
+            <hr>
+    <div class="row">
+        {% if fav_items|length == 0 %}
+                <div class="alert alert-warning col-12">
+                    <strong>
+                        <h3>No Favorite Found!</h3>
+                    </strong>
+                </div>
+        {% elif fav_items|length > 0 %}
+		{% for product in fav_items %}
+		<div class="col-lg-4">
+
+			<img class="thumbnail" src="{{product.imageURL}}">
+
+			<div class="box-element product">
+
+                    <h6><strong>{{product.name}}</strong>
+                        <button data-product="{{ product.name }}"
+                                data-action="removef" style="display: inline-block;
+                                 float: right" class="btn btn-outline-danger add-btn like">Remove from Favorites</button>
+                    </h6>
+
+				<hr>
+                {% csrf_token %}
+				<button data-product="{{ product.id }}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+				<h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
+
+			</div>
+
+		</div>
+		{% endfor %}
+        {% endif %}
+	</div>
+{% endblock content %}
